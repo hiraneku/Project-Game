@@ -1,0 +1,14 @@
+{
+  "name": "Silence of Life — Movement Prototype",
+  "short_name": "Silence of Life",
+  "description": "Prototype game 2D side-scrolling untuk mobile.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#090a12",
+  "theme_color": "#090a12",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "assets/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
