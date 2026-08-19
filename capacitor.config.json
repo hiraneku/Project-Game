@@ -1,7 +1,7 @@
 {
   "appId": "com.silenceoflife.game",
   "appName": "Silence of Life",
-  "webDir": ".",
+  "webDir": "www",
   "server": {
     "androidScheme": "https"
   },

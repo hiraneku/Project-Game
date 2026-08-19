@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Silence of Life</string>
+    <string name="title_activity_main">Silence of Life</string>
+    <string name="package_name">com.silenceoflife.game</string>
+    <string name="custom_url_scheme">com.silenceoflife.game</string>
+</resources>
