@@ -65,5 +65,5 @@ function draw() {
   if (dashFlash > 0) { ctx.fillStyle = `rgba(255,247,196,${dashFlash * 0.25})`; ctx.fillRect(0, 0, canvas.width, canvas.height); }
 }
 let last = 0;
-function loop(now) { if (now - last >= 22) { last = now; update(); draw(); } requestAnimationFrame(loop); }
+function loop(now) { if (now - last >= 22) { last = now; try { update(); draw(); } catch (error) { ctx.setTransform(1,0,0,1,0,0); ctx.globalAlpha=1; ctx.fillStyle='#151522'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#9a86ad'; ctx.fillRect(0,430,canvas.width,110); ctx.fillStyle='#ffd83d'; ctx.beginPath(); ctx.arc(150,390,16,0,Math.PI*2); ctx.fill(); status.textContent='GAME ERROR: '+error.message; } } requestAnimationFrame(loop); }
 requestAnimationFrame(loop);
