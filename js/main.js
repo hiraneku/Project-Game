@@ -57,7 +57,7 @@ function draw() {
   cameraVelocity += (target - cameraX) * 0.018; cameraVelocity *= 0.82; cameraX += cameraVelocity;
   const cam = cameraX, now = performance.now();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (background.complete) { const offset = ((cam * 0.12) % canvas.width + canvas.width) % canvas.width; ctx.drawImage(background, -offset, 0, canvas.width, canvas.height); ctx.drawImage(background, canvas.width - offset, 0, canvas.width, canvas.height); } else { ctx.fillStyle = '#151522'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+  if (background.complete && background.naturalWidth > 0) { const offset = ((cam * 0.12) % canvas.width + canvas.width) % canvas.width; ctx.drawImage(background, -offset, 0, canvas.width, canvas.height); ctx.drawImage(background, canvas.width - offset, 0, canvas.width, canvas.height); } else { ctx.fillStyle = '#151522'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
   ctx.fillStyle = '#d7cdea'; for (const star of stars) { const x = star.x - cam * 0.2; if (x > 0 && x < canvas.width) { ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.arc(x, star.y, star.r, 0, Math.PI * 2); ctx.fill(); } } ctx.globalAlpha = 1;
   for (const p of platforms) { ctx.fillStyle = '#252435'; ctx.fillRect(p.x - cam, p.y, p.width, p.height); ctx.fillStyle = '#9a86ad'; ctx.fillRect(p.x - cam, p.y, p.width, 5); }
   if (player.dashTime > 0) { ctx.save(); ctx.globalAlpha = 0.22; ctx.fillStyle = '#ffd83d'; for (let i = 1; i < 6; i++) { ctx.beginPath(); ctx.arc(player.x - cam + player.width / 2 - player.vx * i * 0.02, player.y + player.height / 2, 16, 0, Math.PI * 2); ctx.fill(); } ctx.restore(); }
