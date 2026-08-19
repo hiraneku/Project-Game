@@ -1,1 +1,19 @@
 *{box-sizing:border-box}body{margin:0;background:#090a12;color:#eeeaf2;font-family:system-ui,sans-serif;min-height:100vh;display:grid;place-items:center;padding:18px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.game-shell{width:min(1000px,100%)}header{display:flex;justify-content:space-between;align-items:end;margin-bottom:14px}h1{font:400 clamp(28px,5vw,48px) Georgia,serif;margin:0}.eyebrow{color:#ff654b;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px}.status{color:#aaa5b5;font-size:12px}canvas{display:block;width:100%;height:auto;border:1px solid #343142;border-radius:16px;background:#151522;image-rendering:auto;box-shadow:0 20px 60px #0008}.help{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;color:#aaa5b5;font-size:12px}.key{border:1px solid #3d394b;border-bottom-width:2px;border-radius:5px;padding:3px 7px;color:#eeeaf2}.mobile{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px;position:fixed;left:12px;right:12px;bottom:14px;z-index:10}@media(max-width:600px){body{padding:12px}.status{display:none}.help{font-size:11px}.mobile{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px;position:fixed;left:12px;right:12px;bottom:14px;z-index:10}.mobile button{padding:15px 6px;border:1px solid #3d394b;border-radius:9px;background:#1b1a29;color:#eeeaf2;font-weight:700;touch-action:none}.mobile button:active,.mobile button.active{background:#ff654b;color:#090a12}}
+
+/* Mobile landscape game layout */
+@media (max-width: 900px) and (orientation: landscape) {
+  html, body { width:100%; height:100%; overflow:hidden; padding:0; }
+  body { display:block; background:#090a12; }
+  .game-shell { width:100vw; height:100vh; max-width:none; margin:0; position:relative; }
+  header { position:absolute; z-index:3; top:10px; left:18px; right:18px; margin:0; pointer-events:none; }
+  header h1 { display:none; }
+  .eyebrow { font-size:10px; text-shadow:0 2px 4px #000; }
+  .status { font-size:11px; text-shadow:0 2px 4px #000; }
+  canvas { width:100vw; height:100vh; border:0; border-radius:0; box-shadow:none; }
+  .help { display:none; }
+  .mobile { position:fixed; z-index:10; left:16px; right:16px; bottom:12px; display:grid; grid-template-columns:repeat(5, minmax(54px, 1fr)); gap:8px; margin:0; }
+  .mobile button { min-height:48px; padding:8px 4px; background:#121322dd; backdrop-filter:blur(8px); font-size:clamp(11px, 2.2vw, 15px); border-color:#8e87aa88; box-shadow:0 4px 14px #0006; }
+}
+@media (max-width: 900px) and (orientation: portrait) {
+  body::before { content:'Putar HP ke posisi landscape untuk memainkan game'; position:fixed; inset:0; z-index:99; display:grid; place-items:center; padding:30px; text-align:center; background:#090a12; color:#eeeaf2; font-size:18px; }
+}
