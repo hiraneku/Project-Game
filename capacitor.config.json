@@ -1,0 +1,11 @@
+{
+  "appId": "com.silenceoflife.game",
+  "appName": "Silence of Life",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#090a12"
+  }
+}

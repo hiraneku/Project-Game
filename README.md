@@ -23,3 +23,24 @@ https://hiraneku.github.io/Project-Game/
 - `background-aesthetic.png` — background environment sementara.
 
 Aset karakter sengaja belum disimpan. Aset tersebut akan ditambahkan kembali setelah sistem movement dan struktur game sudah stabil.
+
+## Menyiapkan APK Android dengan Capacitor
+
+Prasyarat: Node.js, Android Studio, dan Android SDK.
+
+```bash
+npm install
+npx cap add android
+npx cap sync android
+npx cap open android
+```
+
+Setelah Android Studio terbuka, jalankan emulator atau sambungkan HP Android lalu tekan Run. Untuk membuat APK, gunakan menu **Build → Generate App Bundles or APKs → Generate APKs**.
+
+Setiap ada perubahan pada game web, jalankan:
+
+```bash
+npx cap sync android
+```
+
+Folder `android/` akan dibuat oleh Capacitor setelah perintah `cap add android` dijalankan dan sebaiknya ikut disimpan di repository.
