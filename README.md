@@ -1,11 +1,25 @@
-# Silence of Life — Browser Preview
+# Silence of Life — Movement Prototype
+
+Prototype browser untuk menguji fondasi movement game 2D side-scrolling.
+
+## Fitur
+
+- Gerak kiri dan kanan dengan akselerasi/deselerasi.
+- Jalan/lari toggle.
+- Lompat dengan gravity, coyote time, dan jump buffer.
+- Dash blink dengan afterimage dan flash cue.
+- Kamera follow, smoothing, damping, look-ahead, dead zone, bounds, bob, dan parallax.
+- Kontrol touch untuk HP.
+- Level platform pengujian.
+- Bola kuning sebagai placeholder sementara.
 
 ## Preview
 
-Buka preview game: **https://hiraneku.github.io/Project-Game/**
+https://hiraneku.github.io/Project-Game/
 
-> Jika belum aktif saat pertama dibuka, tunggu workflow GitHub Pages selesai di tab **Actions** repository.
+## Struktur saat ini
 
-Prototype pertama untuk idle animation karakter utama. Jalankan server statis dari folder ini, lalu buka `index.html`.
+- `index.html` — prototype movement yang dapat dimainkan.
+- `background-aesthetic.png` — background environment sementara.
 
-> Catatan: gambar referensi dipakai sementara sebagai visual karakter; tahap berikutnya adalah memisahkan latar dan mengubahnya menjadi sprite pixel transparan.
+Aset karakter sengaja belum disimpan. Aset tersebut akan ditambahkan kembali setelah sistem movement dan struktur game sudah stabil.
