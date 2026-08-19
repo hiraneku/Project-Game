@@ -1,1 +1,69 @@
-const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),status=document.querySelector('#status');const keys=new Set();let run=false;const world={w:2400,ground:430};const p={x:150,y:350,w:34,h:80,vx:0,vy:0,onGround:false,face:1,coyote:0,jumpBuffer:0,dash:0,dashCooldown:0};let cameraX=0,cameraVelocity=0,cameraShake=0,dashFlash=0;const camera={deadZone:110,offsetX:0,offsetY:0,zoom:1};const platforms=[{x:0,y:430,w:900,h:110},{x:980,y:430,w:620,h:110},{x:1680,y:430,w:720,h:110},{x:220,y:350,w:150,h:18},{x:470,y:285,w:170,h:18},{x:760,y:365,w:120,h:18},{x:1040,y:335,w:180,h:18},{x:1320,y:270,w:170,h:18},{x:1510,y:365,w:120,h:18},{x:1780,y:325,w:190,h:18},{x:2080,y:260,w:180,h:18}];const background=new Image();background.src='assets/backgrounds/background-aesthetic.png?v=f96a916';const stars=Array.from({length:70},(_,i)=>({x:(i*137)%world.w,y:35+(i*53)%260,r:i%3?1:2}));function down(k){keys.add(k)}function up(k){keys.delete(k)}addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' ','Shift'].includes(e.key))e.preventDefault();if(e.key==='Shift'&&!e.repeat)run=!run;down(e.key)});addEventListener('keyup',e=>up(e.key));document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture?.(e.pointerId);down(k)};b.onpointerup=b.onpointercancel=b.onpointerleave=e=>{e.preventDefault();up(k)}});const runButton=document.querySelector('#runButton');runButton.onpointerdown=e=>{e.preventDefault();run=!run;runButton.textContent=run?'⚡ LARI':'⚡ JALAN';runButton.classList.toggle('active',run)};function input(k){return keys.has(k)||keys.has(k==='left'?'ArrowLeft':k==='right'?'ArrowRight':k)}function update(){if(p.dashCooldown>0)p.dashCooldown-=.022;dashFlash=Math.max(0,dashFlash-.055);if(keys.has('dash')&&p.dash<=0&&p.dashCooldown<=0){p.dash=.42;p.dashCooldown=.75;dashFlash=1;p.vy=0;p.vx=p.face*(run?16:13);keys.delete('dash')}if(p.dash>0){p.dash-=.022;p.x+=p.vx;status.textContent='DASH · BLINK';return}p.coyote=p.onGround?.1:Math.max(0,p.coyote-.022);if(keys.has(' ')||keys.has('Spacebar')||keys.has('jump'))p.jumpBuffer=.12;else p.jumpBuffer=Math.max(0,p.jumpBuffer-.022);const left=input('left')||keys.has('a')||keys.has('A'),right=input('right')||keys.has('d')||keys.has('D');const speed=run?5.8:3.2;const acceleration=p.onGround?0.75:0.42;const friction=p.onGround?0.78:0.94;if(left){p.vx+=(-speed-p.vx)*acceleration;p.face=-1}else if(right){p.vx+=(speed-p.vx)*acceleration;p.face=1}else p.vx*=friction;if(Math.abs(p.vx)<.05)p.vx=0;if(p.jumpBuffer>0&&p.coyote>0){p.vy=-11.5;p.onGround=false;p.coyote=0;p.jumpBuffer=0;keys.delete(' ');keys.delete('jump')}p.vy=Math.min(p.vy+.82,18);const oldBottom=p.y+p.h;p.x=Math.max(0,Math.min(world.w-p.w,p.x+p.vx));p.y+=p.vy;p.onGround=false;for(const q of platforms){if(p.x+p.w>q.x&&p.x<q.x+q.w&&oldBottom<=q.y&&p.y+p.h>=q.y&&p.vy>=0){p.y=q.y-p.h;p.vy=0;p.onGround=true}}if(p.y>600){p.x=150;p.y=300;p.vy=0}status.textContent=`${run?'RUN':'WALK'} · ${Math.round(Math.abs(p.vx)*10)/10} speed`}function draw(){const time=performance.now();const speed=Math.abs(p.vx);camera.zoom+=(1+Math.min(speed/80,.045)-camera.zoom)*.08;const lookAhead=p.vx*22;const desired=p.x-canvas.width*.35+lookAhead;const deadLeft=cameraX+camera.deadZone,deadRight=cameraX+canvas.width-camera.deadZone;if(desired>deadLeft&&desired<deadRight)camera.offsetX+=(0-camera.offsetX)*.08;const targetCamera=Math.max(0,Math.min(world.w-canvas.width,desired+camera.offsetX));const distance=targetCamera-cameraX;cameraVelocity+=distance*.018;cameraVelocity*=.82;cameraX+=cameraVelocity;cameraShake*=.88;const bob=p.onGround?Math.sin(time/180)*1.1:Math.sin(time/95)*.45;const cam=cameraX+camera.offsetX+((Math.random()-.5)*cameraShake);ctx.clearRect(0,0,canvas.width,canvas.height);if(background.complete){const px=((cam*.12)%canvas.width+canvas.width)%canvas.width;ctx.drawImage(background,-px,0,canvas.width,canvas.height);ctx.drawImage(background,canvas.width-px,0,canvas.width,canvas.height);ctx.globalAlpha=.22;ctx.fillStyle='#7d7099';ctx.fillRect(0,300,canvas.width,140);ctx.globalAlpha=1}else{ctx.fillStyle='#151522';ctx.fillRect(0,0,canvas.width,canvas.height)}ctx.fillStyle='#bdb5d0';stars.forEach(s=>{const x=s.x-cam*.25;if(x>-5&&x<canvas.width+5){ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(x,s.y,s.r,0,7);ctx.fill()}});ctx.globalAlpha=1;ctx.fillStyle='#171724';ctx.beginPath();ctx.arc(760-cam*.08,125,62,0,7);ctx.fill();platforms.forEach(q=>{ctx.fillStyle='#252435';ctx.fillRect(q.x-cam,q.y,q.w,q.h);ctx.fillStyle='#8f7fa5';ctx.fillRect(q.x-cam,q.y,q.w,5);ctx.fillStyle='#3c3650';ctx.fillRect(q.x-cam,q.y+5,q.w,4)});const playerBob=p.onGround?Math.sin(performance.now()/140)*1.5:0;if(p.dash>0){ctx.save();ctx.globalAlpha=.2;ctx.fillStyle='#ffd83d';for(let i=1;i<6;i++){ctx.beginPath();ctx.arc(p.x-cam+p.w/2-p.vx*i*.018,p.y+p.h/2,16,0,Math.PI*2);ctx.fill()}ctx.restore();}const dashAlpha=p.dash>0?(p.dash>.28?1:p.dash<.08?1:0):1;ctx.save();ctx.globalAlpha=dashAlpha;ctx.translate(p.x-cam+p.w/2,p.y+p.h/2+playerBob);const glow=ctx.createRadialGradient(-4,-5,2,0,0,18);glow.addColorStop(0,'#fff7a8');glow.addColorStop(.45,'#ffd83d');glow.addColorStop(1,'#e69b16');ctx.fillStyle=glow;ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.beginPath();ctx.arc(0,0,16,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#60461a';ctx.beginPath();ctx.arc(-5,-3,2,0,Math.PI*2);ctx.arc(5,-3,2,0,Math.PI*2);ctx.fill();ctx.restore();ctx.globalAlpha=1;if(dashFlash>0){ctx.fillStyle='#fff7c455';ctx.fillRect(0,0,canvas.width,canvas.height)} }let lastFrame=0;function loop(now){if(now-lastFrame>=22){lastFrame=now;update();draw()}requestAnimationFrame(loop)}requestAnimationFrame(loop);
+const canvas = document.querySelector('#game');
+const ctx = canvas.getContext('2d');
+const status = document.querySelector('#status');
+const keys = new Set();
+const background = new Image();
+background.src = 'assets/backgrounds/background-aesthetic.png';
+
+const world = { width: 2400, height: 540 };
+const player = { x: 150, y: 300, width: 34, height: 34, vx: 0, vy: 0, face: 1, grounded: false, coyote: 0, jumpBuffer: 0, dashTime: 0, dashCooldown: 0 };
+const platforms = [
+  { x: 0, y: 430, width: 900, height: 110 }, { x: 980, y: 430, width: 620, height: 110 }, { x: 1680, y: 430, width: 720, height: 110 },
+  { x: 220, y: 350, width: 150, height: 18 }, { x: 470, y: 285, width: 170, height: 18 }, { x: 760, y: 365, width: 120, height: 18 },
+  { x: 1040, y: 335, width: 180, height: 18 }, { x: 1320, y: 270, width: 170, height: 18 }, { x: 1510, y: 365, width: 120, height: 18 },
+  { x: 1780, y: 325, width: 190, height: 18 }, { x: 2080, y: 260, width: 180, height: 18 }
+];
+const stars = Array.from({ length: 55 }, (_, i) => ({ x: (i * 137) % world.width, y: 30 + (i * 53) % 230, r: i % 3 ? 1 : 2 }));
+let running = false, cameraX = 0, cameraVelocity = 0, dashFlash = 0;
+
+function press(key) { keys.add(key); }
+function release(key) { keys.delete(key); }
+addEventListener('keydown', e => { if (['ArrowLeft', 'ArrowRight', ' ', 'Shift'].includes(e.key)) e.preventDefault(); if (e.key === 'Shift' && !e.repeat) running = !running; press(e.key); });
+addEventListener('keyup', e => release(e.key));
+document.querySelectorAll('[data-key]').forEach(button => {
+  const key = button.dataset.key;
+  button.addEventListener('pointerdown', e => { e.preventDefault(); button.setPointerCapture?.(e.pointerId); press(key); });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(type => button.addEventListener(type, e => { e.preventDefault(); release(key); }));
+});
+const runButton = document.querySelector('#runButton');
+runButton.addEventListener('pointerdown', e => { e.preventDefault(); running = !running; runButton.textContent = running ? '⚡ LARI' : '⚡ JALAN'; runButton.classList.toggle('active', running); });
+
+function held(name) { return keys.has(name) || keys.has(name === 'left' ? 'ArrowLeft' : name === 'right' ? 'ArrowRight' : name); }
+function update() {
+  const dt = 1 / 45;
+  player.coyote = player.grounded ? 0.12 : Math.max(0, player.coyote - dt);
+  if (held('jump') || keys.has(' ') || keys.has('Spacebar')) player.jumpBuffer = 0.12; else player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
+  if (player.dashCooldown > 0) player.dashCooldown -= dt;
+  dashFlash = Math.max(0, dashFlash - dt * 4);
+  if (keys.has('dash') && player.dashTime <= 0 && player.dashCooldown <= 0) { player.dashTime = 0.38; player.dashCooldown = 0.75; player.vx = player.face * (running ? 15 : 12); player.vy = 0; dashFlash = 1; release('dash'); }
+  if (player.dashTime > 0) { player.dashTime -= dt; player.x += player.vx; status.textContent = 'DASH · BLINK'; return; }
+  const left = held('left') || keys.has('a') || keys.has('A'), right = held('right') || keys.has('d') || keys.has('D');
+  const maxSpeed = running ? 5.8 : 3.2, accel = player.grounded ? 0.22 : 0.12;
+  if (left) { player.vx += (-maxSpeed - player.vx) * accel; player.face = -1; }
+  else if (right) { player.vx += (maxSpeed - player.vx) * accel; player.face = 1; }
+  else player.vx *= player.grounded ? 0.78 : 0.94;
+  if (Math.abs(player.vx) < 0.04) player.vx = 0;
+  if (player.jumpBuffer > 0 && player.coyote > 0) { player.vy = -11.5; player.grounded = false; player.coyote = 0; player.jumpBuffer = 0; release(' '); release('jump'); }
+  player.vy = Math.min(player.vy + 0.82, 18);
+  const oldBottom = player.y + player.height;
+  player.x = Math.max(0, Math.min(world.width - player.width, player.x + player.vx));
+  player.y += player.vy; player.grounded = false;
+  for (const platform of platforms) if (player.x + player.width > platform.x && player.x < platform.x + platform.width && oldBottom <= platform.y && player.y + player.height >= platform.y && player.vy >= 0) { player.y = platform.y - player.height; player.vy = 0; player.grounded = true; }
+  if (player.y > 650) { player.x = 150; player.y = 300; player.vy = 0; }
+  status.textContent = `${running ? 'RUN' : 'WALK'} · ${Math.round(Math.abs(player.vx) * 10) / 10} speed`;
+}
+function draw() {
+  const target = Math.max(0, Math.min(world.width - canvas.width, player.x - canvas.width * 0.35 + player.vx * 22));
+  cameraVelocity += (target - cameraX) * 0.018; cameraVelocity *= 0.82; cameraX += cameraVelocity;
+  const cam = cameraX, now = performance.now();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (background.complete) { const offset = ((cam * 0.12) % canvas.width + canvas.width) % canvas.width; ctx.drawImage(background, -offset, 0, canvas.width, canvas.height); ctx.drawImage(background, canvas.width - offset, 0, canvas.width, canvas.height); } else { ctx.fillStyle = '#151522'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+  ctx.fillStyle = '#d7cdea'; for (const star of stars) { const x = star.x - cam * 0.2; if (x > 0 && x < canvas.width) { ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.arc(x, star.y, star.r, 0, Math.PI * 2); ctx.fill(); } } ctx.globalAlpha = 1;
+  for (const p of platforms) { ctx.fillStyle = '#252435'; ctx.fillRect(p.x - cam, p.y, p.width, p.height); ctx.fillStyle = '#9a86ad'; ctx.fillRect(p.x - cam, p.y, p.width, 5); }
+  if (player.dashTime > 0) { ctx.save(); ctx.globalAlpha = 0.22; ctx.fillStyle = '#ffd83d'; for (let i = 1; i < 6; i++) { ctx.beginPath(); ctx.arc(player.x - cam + player.width / 2 - player.vx * i * 0.02, player.y + player.height / 2, 16, 0, Math.PI * 2); ctx.fill(); } ctx.restore(); }
+  const visible = player.dashTime <= 0.08 || player.dashTime > 0.28; ctx.save(); ctx.globalAlpha = visible ? 1 : 0; const bob = player.grounded ? Math.sin(now / 140) * 1.5 : 0; ctx.translate(player.x - cam + 17, player.y + 17 + bob); const ball = ctx.createRadialGradient(-5, -6, 2, 0, 0, 18); ball.addColorStop(0, '#fff7a8'); ball.addColorStop(0.45, '#ffd83d'); ball.addColorStop(1, '#e69b16'); ctx.fillStyle = ball; ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#60461a'; ctx.beginPath(); ctx.arc(-5, -3, 2, 0, Math.PI * 2); ctx.arc(5, -3, 2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  if (dashFlash > 0) { ctx.fillStyle = `rgba(255,247,196,${dashFlash * 0.25})`; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+}
+let last = 0;
+function loop(now) { if (now - last >= 22) { last = now; update(); draw(); } requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
