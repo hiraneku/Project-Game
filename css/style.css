@@ -17,3 +17,27 @@
 @media (max-width: 900px) and (orientation: portrait) {
   body::before { content:'Putar HP ke posisi landscape untuk memainkan game'; position:fixed; inset:0; z-index:99; display:grid; place-items:center; padding:30px; text-align:center; background:#090a12; color:#eeeaf2; font-size:18px; }
 }
+
+/* Touch-first fullscreen layout */
+@media (max-width: 900px) {
+  html, body { width:100%; height:100%; overflow:hidden; padding:0; }
+  body { display:block; }
+  body::before { display:none !important; content:none; }
+  .game-shell { position:relative; width:100vw; height:100dvh; max-width:none; margin:0; }
+  header { display:none; }
+  canvas { width:100vw; height:100dvh; display:block; border:0; border-radius:0; box-shadow:none; }
+  .help { display:none; }
+  .mobile { position:absolute; inset:0; display:block; margin:0; pointer-events:none; z-index:20; }
+  .mobile button { position:absolute; pointer-events:auto; width:68px; height:68px; min-height:0; padding:5px; border-radius:50%; background:#151627b8; backdrop-filter:blur(8px); border:1px solid #b7aed588; box-shadow:0 5px 16px #0008; color:#fff; font-size:11px; touch-action:none; }
+  .mobile button:active, .mobile button.active { background:#ff654bcc; transform:scale(.94); }
+  .mobile button:nth-child(1) { left:18px; bottom:20px; }
+  .mobile button:nth-child(2) { right:164px; bottom:20px; width:78px; height:78px; }
+  .mobile button:nth-child(3) { left:96px; bottom:20px; }
+  .mobile button:nth-child(4) { right:78px; bottom:88px; }
+  .mobile button:nth-child(5) { right:18px; bottom:20px; }
+}
+@media (max-width:380px) {
+  .mobile button { width:56px; height:56px; font-size:9px; }
+  .mobile button:nth-child(2) { right:132px; width:64px; height:64px; }
+  .mobile button:nth-child(4) { right:66px; bottom:74px; }
+}
