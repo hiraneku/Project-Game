@@ -42,3 +42,4 @@
   .mobile button:nth-child(4) { right:66px; bottom:74px; }
 }
 @media (max-width:900px){canvas{width:100vw!important;height:100dvh!important;object-fit:contain!important;object-position:center!important;background:#090a12!important}}
+@media (max-width:900px){canvas{object-fit:cover!important;width:100vw!important;height:100dvh!important}}
